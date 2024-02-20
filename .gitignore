@@ -7,6 +7,7 @@ obj/
 
 # Visual Studio files
 .vscode/
+.vs/
 *.suo
 *.user
 *.suo
@@ -232,3 +233,6 @@ Backup*/
 UpgradeLog*.XML
 
 *.snk
+
+*.mdf
+*.ldf
