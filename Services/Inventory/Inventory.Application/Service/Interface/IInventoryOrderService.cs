@@ -10,7 +10,9 @@ namespace Inventory.Application.Service.Interface
 {
     public interface IInventoryOrderService
     {
+        Task<GetInventoryOrderWithItemsDTO> CancelInventoryOrder(CancelInventoryOrder model);
         Task<GetInventoryOrderWithItemsDTO> CreateInventoryOrder(CreateInventoryOrderWithItems model);
+        Task<GetInventoryOrderWithItemsDTO> GetInventoryOrderById(GetInventoryOrderWithItemsById model);
         Task<GetInventoryOrderWithItemsDTO> UpdateInventoryOrder(UpdateInventoryOrderWithItems model);
     }
 }

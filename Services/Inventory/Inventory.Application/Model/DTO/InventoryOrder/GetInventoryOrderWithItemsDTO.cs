@@ -18,7 +18,7 @@ namespace Inventory.Application.Model.DTO.InventoryOrder
         public decimal? Discount { get; set; }
         public decimal? ShippingFee { get; set; }
         public decimal? TotalCost { get; set; }
-        public InventoryOrderStatusEnum? InventoryOrderStatus { get; set; }
+        public string? InventoryOrderStatus { get; set; }
         public string? CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string? LastUpdatedBy { get; set; }

@@ -13,8 +13,12 @@ namespace Inventory.Application.Extension
         public static void AddApplicationService(this IServiceCollection services)
         {
             #region Validations
+            services.AddTransient<IValidator<CancelInventoryOrder>, CancelInventoryOrderValidator>();
             services.AddTransient<IValidator<CreateInventoryOrderWithItems>, CreateInventoryOrderWithItemsValidator>();
+            services.AddTransient<IValidator<GetInventoryOrderWithItemsById>, GetInventoryOrderWithItemsByIdValidator>();
             services.AddTransient<IValidator<UpdateInventoryOrderWithItems>, UpdateInventoryOrderWithItemsValidator>();
+
+
 
             #endregion
 

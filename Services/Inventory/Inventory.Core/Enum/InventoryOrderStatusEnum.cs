@@ -8,10 +8,10 @@ namespace Inventory.Core.Enum
 {
     public enum InventoryOrderStatusEnum : int
     {
-        Created = 1,
-        PartiallyCompleted = 2,
-        Completed = 3,
-        Overdue = 4,
-        Cancelled = 5
+        CREATED = 1,
+        PARTIALLY_COMPLETED = 2,
+        COMPLETED = 3,
+        OVERDUE = 4,
+        CANCELLED = 5
     }
 }

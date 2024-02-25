@@ -30,11 +30,11 @@ namespace Inventory.API.Controllers
             {
                 return BadRequest(ResponseWrapper<List<string>>.CreateResponse(false, "Input validation failed", ex.ErrorList));
             }
-            catch(ServiceException ex)
+            catch (ServiceException ex)
             {
                 return StatusCode(500, ResponseWrapper<string>.CreateResponse(false, ex.Message, null));
             }
-            catch(System.Exception)
+            catch (System.Exception)
             {
                 return StatusCode(500, ResponseWrapper<string>.CreateResponse(false, "Error occured processing request", null));
             }
@@ -46,6 +46,52 @@ namespace Inventory.API.Controllers
             try
             {
                 var response = await _inventoryOrderService.UpdateInventoryOrder(requestObj);
+                return Ok(ResponseWrapper<GetInventoryOrderWithItemsDTO>.CreateResponse(true, "Operation successful", response));
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ResponseWrapper<List<string>>.CreateResponse(false, "Input validation failed", ex.ErrorList));
+            }
+            catch (ServiceException ex)
+            {
+                return StatusCode(500, ResponseWrapper<string>.CreateResponse(false, ex.Message, null));
+            }
+            catch (System.Exception)
+            {
+                return StatusCode(500, ResponseWrapper<string>.CreateResponse(false, "Error occured processing request", null));
+            }
+        }
+
+        [HttpDelete("/delete/{id}")]
+        public async Task<IActionResult> CancelOrderWithItems(long id)
+        {
+            try
+            {
+                var requestObj = new CancelInventoryOrder { Id = id };
+                var response = await _inventoryOrderService.CancelInventoryOrder(requestObj);
+                return Ok(ResponseWrapper<GetInventoryOrderWithItemsDTO>.CreateResponse(true, "Operation successful", response));
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ResponseWrapper<List<string>>.CreateResponse(false, "Input validation failed", ex.ErrorList));
+            }
+            catch (ServiceException ex)
+            {
+                return StatusCode(500, ResponseWrapper<string>.CreateResponse(false, ex.Message, null));
+            }
+            catch (System.Exception)
+            {
+                return StatusCode(500, ResponseWrapper<string>.CreateResponse(false, "Error occured processing request", null));
+            }
+        }
+
+        [HttpGet("/get/{id}")]
+        public async Task<IActionResult> GetOrderWithItems(long id)
+        {
+            try
+            {
+                var requestObj = new GetInventoryOrderWithItemsById { Id = id };
+                var response = await _inventoryOrderService.GetInventoryOrderById(requestObj);
                 return Ok(ResponseWrapper<GetInventoryOrderWithItemsDTO>.CreateResponse(true, "Operation successful", response));
             }
             catch (ValidationException ex)

@@ -41,9 +41,9 @@ namespace Inventory.Application.Valitation.Validator
                     result.Errors.Add($"Inventory Order with Id {obj.Id} does not exist.");
                     result.IsValid = false;
                 }
-                else if(order.InventoryOrderStatus != InventoryOrderStatusEnum.Created)
+                else if(order.InventoryOrderStatus != InventoryOrderStatusEnum.CREATED)
                 {
-                    result.Errors.Add($"Cannot modify inventory order because it is '{order.InventoryOrderStatus.ToString()}' state.");
+                    result.Errors.Add($"Cannot modify inventory order because it is in '{order.InventoryOrderStatus.ToString()}' state.");
                 }
             }
 

@@ -8,6 +8,7 @@ using Inventory.Application.Utils;
 using Inventory.Application.Valitation;
 using Inventory.Application.Valitation.Interface;
 using Inventory.Core.Entities;
+using Inventory.Core.Enum;
 using Inventory.Core.Repository;
 using Microsoft.Extensions.Logging;
 using System.Transactions;
@@ -58,7 +59,7 @@ namespace Inventory.Application.Service
                     // Create inventory order entity
                     var inventoryOrderEntity = InventoryOrderMapper.CreateInventoryOrder(model);
                     inventoryOrderEntity.InventoryOrderNumber = uniqueCode;
-                    inventoryOrderEntity.InventoryOrderStatus = Core.Enum.InventoryOrderStatusEnum.Created;
+                    inventoryOrderEntity.InventoryOrderStatus = Core.Enum.InventoryOrderStatusEnum.CREATED;
 
                     // Add inventory order to database
                     bool orderAddSuccess = await _invetoryOrderRepository.AddAsync(inventoryOrderEntity);
@@ -189,6 +190,90 @@ namespace Inventory.Application.Service
             finally
             {
                 _logger.LogInformation("Updating inventory order ended.");
+            }
+        }
+
+        public async Task<GetInventoryOrderWithItemsDTO> CancelInventoryOrder(CancelInventoryOrder model)
+        {
+            _logger.LogInformation("Cancel inventory order started.");
+            try
+            {
+                // Validate the model
+                ValidationResult validationResult = await _validatorService.Validate(model);
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors, "Request validation failed.");
+                }
+
+                using (TransactionScope ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    // Fetch current order and items from the database
+                    InventoryOrder inventoryOrderEntity = await _invetoryOrderRepository.GetByIdAsync(model.Id!.Value)
+                        ?? throw new ServiceException($"Inventory order not found for Id {model.Id!.Value}.");
+
+                    IEnumerable<InventoryOrderItem> currentOrderItemEntities = await _invetoryOrderItemRepository.GetByOrderIdAsync(inventoryOrderEntity.Id) ?? Enumerable.Empty<InventoryOrderItem>();
+
+                    // Update the inventory order
+                    inventoryOrderEntity.InventoryOrderStatus = InventoryOrderStatusEnum.CANCELLED;
+                    bool orderUpdateSuccess = await _invetoryOrderRepository.UpdateAsync(inventoryOrderEntity);
+                    if (!orderUpdateSuccess)
+                    {
+                        throw new ServiceException("Error occurred while cancelling inventory order.");
+                    }
+
+                    // Complete the transaction
+                    ts.Complete();
+
+                    // Return the updated order with items
+                    return InventoryOrderMapper.GetInventoryOrderWithItems(inventoryOrderEntity, currentOrderItemEntities);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while cancelling inventory order.");
+                throw;
+            }
+            finally
+            {
+                _logger.LogInformation("Cancel inventory order ended.");
+            }
+        }
+
+        public async Task<GetInventoryOrderWithItemsDTO> GetInventoryOrderById(GetInventoryOrderWithItemsById model)
+        {
+            _logger.LogInformation("Get inventory order by id started.");
+            try
+            {
+                // Validate the model
+                ValidationResult validationResult = await _validatorService.Validate(model);
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors, "Request validation failed.");
+                }
+
+                using (TransactionScope ts = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    // Fetch current order and items from the database
+                    InventoryOrder inventoryOrderEntity = await _invetoryOrderRepository.GetByIdAsync(model.Id!.Value)
+                        ?? throw new ServiceException($"Inventory order not found for Id {model.Id!.Value}.");
+
+                    IEnumerable<InventoryOrderItem> currentOrderItemEntities = await _invetoryOrderItemRepository.GetByOrderIdAsync(inventoryOrderEntity.Id) ?? Enumerable.Empty<InventoryOrderItem>();
+
+                    // Complete the transaction
+                    ts.Complete();
+
+                    // Return the updated order with items
+                    return InventoryOrderMapper.GetInventoryOrderWithItems(inventoryOrderEntity, currentOrderItemEntities);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting inventory order by id.");
+                throw;
+            }
+            finally
+            {
+                _logger.LogInformation("Get inventory order by id ended.");
             }
         }
         #endregion

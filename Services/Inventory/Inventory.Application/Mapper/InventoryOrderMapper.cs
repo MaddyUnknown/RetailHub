@@ -49,7 +49,7 @@ namespace Inventory.Application.Mapper
             orderDTO.Discount = order.Discount;
             orderDTO.ShippingFee = order.ShippingFee;
             orderDTO.TotalCost = order.TotalCost;
-            orderDTO.InventoryOrderStatus = order.InventoryOrderStatus;
+            orderDTO.InventoryOrderStatus = order.InventoryOrderStatus.ToString();
             orderDTO.CreatedBy = order.CreatedBy;
             orderDTO.LastUpdatedBy = order.UpdatedBy;
             orderDTO.CreatedOn = order.CreationDate;
